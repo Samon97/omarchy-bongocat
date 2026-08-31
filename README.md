@@ -39,6 +39,24 @@ omarchy plugin enable Samon97.bongocat
 - Read access to `/dev/input/event*`. The keyboard usually already belongs to
   the `input` group, so most of the time it just works. If nothing happens,
   check that your user is in that group.
+- An **external asset**: the bundled `bongocat.ttf` icon font is a modified
+  conversion of the font from the MIT-licensed
+  [Bongo Cat](https://github.com/kitgore/BongoCat) VS Code extension by
+  pixl-garden (Copyright © 2023 ben). See [Credits](#credits) and
+  [`LICENSE`](LICENSE).
+
+## Uninstall
+
+Remove the plugin again with:
+
+```bash
+# Disable it in the bar, then remove the plugin folder
+omarchy plugin disable Samon97.bongocat
+rm -rf ~/.config/omarchy/plugins/Samon97.bongocat
+```
+
+That's it — the plugin doesn't write any config or state outside its own
+folder.
 
 ## Repo layout
 
