@@ -1,125 +1,118 @@
 # 🐱 Bongo Cat for Omarchy
 
-Eine kleine Bongo Cat, die in deiner Omarchy-Leiste sitzt und bei jedem
-Tastendruck mit den Pfoten auf die „Trommel" schlägt. Sobald du kurz aufhörst
-zu tippen, setzt sie sich zurück in ihre Ruhepose (beide Pfoten oben).
+A small bongo cat that sits in your Omarchy bar and drums on the table with its
+paws whenever you type. Stop typing for a second and it goes back to its
+default pose (both paws up).
 
-![Demo](https://github.com/kitgore/BongoCat/assets/87792049/cd430b3e-968b-4e87-9c11-2aa2765d99de)
+![Bongo cat drumming in the bar](https://github.com/Samon97/omarchy-bongocat/raw/main/assets/bongocat.gif)
 
-> Screenshot/GIF hier platzieren.
+> **Heads up:** this is an adaptation of the
+> [Bongo Cat](https://github.com/kitgore/BongoCat) VS Code extension by
+> **pixl-garden**. I rebuilt it as an Omarchy bar widget and borrowed its icon
+> font (more on that [below](#credits)).
 
-## Features
+## What it does
 
-- Trommeln bei jedem Tastendruck, mit wechselnden Pfoten (links runter / rechts runter).
-- Zurück zur Ruhepose nach ~1 Sekunde ohne Tippen.
-- Kompakt in die Leiste integriert; die unterste Linie der Katze ist auf die
-  unterste Linie der Uhrzeit ausgerichtet.
-- Liest komplett lokal von `/dev/input` — keine Cloud, keine Abhängigkeit von
-  einem Editor.
+- Drums on every keypress, alternating paws (left down / right down).
+- Goes back to its idle pose after ~1 second without typing.
+- Fits compactly in the bar — the cat's bottom line lines up with the clock's
+  text.
+- Reads locally from `/dev/input` — no cloud, no editor dependency.
 
-## Installation
+## Install
 
-Das Plugin wird als Omarchy-Plugin über GitHub installiert:
+Install it as an Omarchy plugin straight from GitHub:
 
 ```bash
-omarchy plugin add https://<deine-repo-url>.git --enable
+omarchy plugin add https://github.com/Samon97/omarchy-bongocat.git --enable
 ```
 
-Danach erscheint die Widget-Kategorie **Fun → BongoCat** und kann über
-`omarchy plugin enable Samon97.bongocat` aktiv bzw. in einer Bar-Sektion platziert
-werden.
+Then enable / move it in the bar with:
 
-### Abhängigkeiten
+```bash
+omarchy plugin enable Samon97.bongocat
+```
 
-- **Omarchy** (mit unserem Quickshell-Shell-Unterbau)
-- Berechtigung, `/dev/input/event*` zu lesen (normalerweise gehört die
-  Tastatur zur `input`-Gruppe des Benutzers; falls nichts passiert, prüfe die
-  Gruppenmitgliedschaft).
+### Requirements
 
-## Aufbau
+- **Omarchy** (and its Quickshell-based shell)
+- Read access to `/dev/input/event*`. The keyboard usually already belongs to
+  the `input` group, so most of the time it just works. If nothing happens,
+  check that your user is in that group.
+
+## Repo layout
 
 ```
 Samon97.bongocat/
-├── manifest.json       # Omarchy-Manifest (Pflichtdatei im Repo-Root)
-├── BarWidget.qml       # Widget-Einstiegspunkt (Canvas-Rendering + Logik)
-├── key_monitor.py      # Liest Tastendrücke von /dev/input
-├── bongocat.ttf        # Eingebettete Iconfont (aus pixl-garden konvertiert)
-├── LICENSE             # MIT (mit Hinweis auf den Ursprung der Iconfont)
+├── manifest.json       # Omarchy manifest (must live in the repo root)
+├── BarWidget.qml       # Widget entry point (canvas rendering + logic)
+├── key_monitor.py      # Reads keypresses from /dev/input
+├── bongocat.ttf        # Bundled icon font (converted from pixl-garden)
+├── assets/bongocat.gif # Demo GIF for this README
+├── LICENSE             # MIT (with a note about the original font)
 ├── CHANGELOG.md
 └── README.md
 ```
 
-**Wichtig fürs Repo:** `omarchy plugin add` klont das Repo und validiert es
-direkt. Daher müssen `manifest.json` und der Einstiegspunkt `BarWidget.qml` im
-Repo-**Root** liegen; Dateien aus `entryPoints` sind relative Pfade und es
-dürfen keine Symlinks verwendet werden. Der flache Aufbau entspricht der
-Konvention der mitgelieferten Bar-Widgets.
+**Note for the repo:** `omarchy plugin add` clones your repo and validates it
+directly, so `manifest.json` and the entry point `BarWidget.qml` have to sit in
+the **repo root**. Entry points are relative paths, and symlinks aren't
+allowed. This flat layout follows the convention of the built-in bar widgets.
 
-## Wie das funktioniert
+## How it works
 
-1. `key_monitor.py` öffnet alle `/dev/input`-Geräte und gibt bei jedem
-   `EV_KEY`-Event (Wert 1 = gedrückt) eine neue Zeile auf stdout aus.
-2. `BarWidget.qml` startet das Skript als `Process` und ruft bei jedem
-   eingehenden Zeichen `drum()` auf, das zwischen „linke Pfote runter" und
-   „rechte Pfote runter" hin- und herschaltet.
-3. Ein `Timer` setzt nach ~1 s auf die Ruhepose zurück.
-4. Die Iconfont-Glyphen werden auf einem `Canvas` gezeichnet. Dabei wird nicht
-   die unsichtbare Bounding-Box, sondern der **sichtbare** gemalte Umfang
-   zentriert, und die Unterkante der Katze wird an der Unterkante der
-   Uhrzeichentextzeile verankert.
+1. `key_monitor.py` opens all `/dev/input` devices and prints a line to stdout
+   for every pressed key (`EV_KEY` event with value 1).
+2. `BarWidget.qml` runs that script as a `Process`. Each incoming line calls
+   `drum()`, which switches between "left paw down" and "right paw down".
+3. A `Timer` resets it to the idle pose after ~1 second.
+4. The icon glyphs are drawn on a `Canvas`. Instead of the invisible bounding
+   box, the *visible* painted outline is centered, and the cat's bottom edge is
+   anchored to the bottom of the clock's text line.
 
-## Umfang der Bongo-Cat-Extension von pixl-garden
+## Credits
 
-Dieses Plugin basiert auf der Idee und dem **Iconfont** der VS-Code-Extension
-**[Bongo Cat](https://github.com/kitgore/BongoCat)** von *pixl-garden*
-(MIT, Copyright © 2023 ben).
+This is an **adaptation**, not a from-scratch idea. It's based on the
+**[Bongo Cat](https://github.com/kitgore/BongoCat)** VS Code extension by
+**pixl-garden** (MIT, Copyright © 2023 ben).
 
-**Übernommen/umgesetzt aus pixl-garden:**
-- Die **Bongo-Cat-Grafik** in Form der Iconfont-Glyphen (`b`/`c`/`d`/`a` =
-  linke/rechte Pfote, oben/unten). Die `bongocat.ttf` hier ist eine Konvertierung
-  der von pixl-garden veröffentlichten Font (`bongocat.woff`).
-- Das **Verhalten**: bei Tasteneingabe mit alternierenden Pfoten schlagen, nach
-  kurzer Pause zurück in die Ruheposition. Diese Logik stammt aus
-  `src/extension.ts` der Extension und wurde für Omarchy neu umgesetzt.
+What I took from pixl-garden:
+- The **cat artwork**, as an icon font. The `bongocat.ttf` here is a
+  conversion of the font pixl-garden published (`bongocat.woff`).
+- The **behavior**: drum on input with alternating paws, then settle back after
+  a pause. That logic comes from their `src/extension.ts` and was reworked for
+  Omarchy.
 
-**Eigenleistung / neue Entwicklung (nicht von pixl-garden):**
-- Das komplette Omarchy-/Quickshell-Plugin: `BarWidget.qml` (QML-Code, Canvas-
-  Rendering, Prozess-Anbindung, Ausrichtung) — Code ist von Grund auf neu,
-  nicht übernommen.
-- `key_monitor.py`: ein neuer Linux-Eingabe-Reader für `/dev/input` (die
-  Extension selbst war reine VS-Code-/Statusleisten-Logik und konnte nicht
-  wiederverwendet werden).
-- **Bugfix** an der Font: ein doppelt überlappender Contour in der Glyphe für
-  die „linke Pfote oben" wurde entfernt, dadurch ist der Mund jetzt korrekt
-  gefüllt statt ausgehöhlt dargestellt.
+What's new here (my own work):
+- The whole Omarchy / Quickshell plugin: `BarWidget.qml` is fresh QML code
+  (canvas rendering, process handling, the alignment stuff) written from
+  scratch, not copied.
+- `key_monitor.py`: a new Linux input reader for `/dev/input`. The original
+  extension was pure VS Code status-bar logic and couldn't be reused.
+- A small **font fix**: removed a duplicate overlapping outline in the
+  "left paw up" glyph that made the mouth look hollow.
 
-> Die Katze ist damit nicht von pixl-garden „kopiert", sondern deren freie
-> Iconfont wurde — lizenziertes MIT — in einen neuen, eigenständigen
-> Omarchy-Widget-Stack integriert.
+So the cat isn't "cloned" — I took pixl-garden's freely MIT-licensed icon font
+and built a brand new Omarchy widget around it.
 
-## Rolle der KI
+## How AI was involved
 
-Dieses Projekt wurde in einer **gemeinsamen Entwicklungssitzung mit einem
-KI-Coding-Assistenten** ([opencode](https://opencode.ai)) erstellt. Der Ablauf
-war iterativ und mit menschlicher Rückmeldung:
+This project was made together with an **AI coding assistant**
+([opencode](https://opencode.ai)), in an iterative back-and-forth:
 
-- Der **Assistent** hat den QML-/Python-Code entworfen und geschrieben, den
-  Plugin-Aufbau per `omarchy plugin validate` geprüft und wiederholt
-  Shell/Bar neu geladen.
-- Der **Assistent** hat Bugdiagnosen durchgeführt — u. a. die ausgehöhlte
-  Munddarstellung auf ein doppelt überlappendes Font-Contour zurückgeführt und
-  behoben, sowie die vertikale Ausrichtung an der Uhrzeitzeile korrigiert.
-- Die **menschliche Person** hat die visuelle Ausrichtung bewertet (z. B. die
-  Entscheidung, die Katze an der Unterkante der Uhrzeit auszurichten) und die
-  Designrichtungen vorgegeben.
+- The **AI** designed and wrote most of the QML / Python, ran
+  `omarchy plugin validate`, and reloaded the shell as we went.
+- The **AI** debugged things like the hollow mouth (traced to the duplicate
+  font outline) and fixed the vertical alignment to the clock.
+- The **human** (me) judged what it looked like — e.g. deciding the cat should
+  line up with the bottom of the clock — and steered the design.
 
-Der Funktionsumfang, das Verhalten und die Bildgestaltung wurden Mensch-und-KI
-gemeinsam festgelegt; die Code-Eigenleistung stammt überwiegend von der KI,
-geprüft und freigegeben vom Menschen. Siehe auch `CHANGELOG.md` und
-`LICENSE` für Details zu Herkunft und Lizenz.
+So the behavior, look, and feel were decided together; the coding was mostly
+done by the AI, then reviewed and approved by me. See `CHANGELOG.md` and
+`LICENSE` for source and licensing details.
 
-## Lizenz
+## License
 
-MIT — siehe [`LICENSE`](LICENSE). Die eingebettete Iconfont stammt aus der
-Bongo-Cat-Extension von pixl-garden (MIT, Copyright © 2023 ben); die dortigen
-Lizenz- und Copyright-Hinweise sind in `LICENSE` dokumentiert.
+MIT — see [`LICENSE`](LICENSE). The bundled icon font comes from the Bongo Cat
+extension by pixl-garden (MIT, Copyright © 2023 ben); their license and
+copyright are noted in `LICENSE`.
