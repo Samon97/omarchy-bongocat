@@ -1,0 +1,8 @@
+# Omarchy plugin add stages its clone here before validating; never commit it.
+.add.tmp.*
+
+# Logs / editor cruft
+*.log
+.vscode/
+.idea/
+*.swp

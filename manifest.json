@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "samuel.bongocat",
+  "name": "BongoCat",
+  "version": "1.0.0",
+  "author": "samuel",
+  "description": "A bongo cat that drums with its paws on each keypress",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "BarWidget.qml" },
+  "barWidget": {
+    "displayName": "BongoCat",
+    "category": "Fun",
+    "defaultSection": "center",
+    "allowMultiple": false
+  }
+}
