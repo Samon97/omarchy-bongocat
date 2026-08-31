@@ -26,7 +26,7 @@ omarchy plugin add https://<deine-repo-url>.git --enable
 ```
 
 Danach erscheint die Widget-Kategorie **Fun → BongoCat** und kann über
-`omarchy plugin enable samuel.bongocat` aktiv bzw. in einer Bar-Sektion platziert
+`omarchy plugin enable Samon97.bongocat` aktiv bzw. in einer Bar-Sektion platziert
 werden.
 
 ### Abhängigkeiten
@@ -39,7 +39,7 @@ werden.
 ## Aufbau
 
 ```
-samuel.bongocat/
+Samon97.bongocat/
 ├── manifest.json       # Omarchy-Manifest (Pflichtdatei im Repo-Root)
 ├── BarWidget.qml       # Widget-Einstiegspunkt (Canvas-Rendering + Logik)
 ├── key_monitor.py      # Liest Tastendrücke von /dev/input
