@@ -6,10 +6,10 @@ import qs.Ui
 
 BarWidget {
   id: root
-  moduleName: "Samon97.bongocat"
+  moduleName: "samon97.bongocat"
 
   readonly property string home: Quickshell.env("HOME")
-  readonly property string monitorScript: home + "/.config/omarchy/plugins/Samon97.bongocat/key_monitor.py"
+  readonly property string monitorScript: home + "/.config/omarchy/plugins/samon97.bongocat/key_monitor.py"
 
   // The BongoCat icon font (extracted from the VS Code extension
   // pixl-garden.BongoCat). Two glyphs are drawn side by side (left half + right

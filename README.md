@@ -30,7 +30,7 @@ omarchy plugin add https://github.com/Samon97/omarchy-bongocat.git --enable
 Then enable / move it in the bar with:
 
 ```bash
-omarchy plugin enable Samon97.bongocat
+omarchy plugin enable samon97.bongocat
 ```
 
 ### Requirements
@@ -51,8 +51,8 @@ Remove the plugin again with:
 
 ```bash
 # Disable it in the bar, then remove the plugin folder
-omarchy plugin disable Samon97.bongocat
-rm -rf ~/.config/omarchy/plugins/Samon97.bongocat
+omarchy plugin disable samon97.bongocat
+rm -rf ~/.config/omarchy/plugins/samon97.bongocat
 ```
 
 That's it — the plugin doesn't write any config or state outside its own
@@ -61,7 +61,7 @@ folder.
 ## Repo layout
 
 ```
-Samon97.bongocat/
+samon97.bongocat/
 ├── manifest.json       # Omarchy manifest (must live in the repo root)
 ├── BarWidget.qml       # Widget entry point (canvas rendering + logic)
 ├── key_monitor.py      # Reads keypresses from /dev/input
