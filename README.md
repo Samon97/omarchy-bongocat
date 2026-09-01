@@ -17,7 +17,8 @@ default pose (both paws up).
 - Goes back to its idle pose after ~1 second without typing.
 - Fits compactly in the bar — the cat's bottom line lines up with the clock's
   text.
-- Reads locally from `/dev/input` — no cloud, no editor dependency.
+- Reads keypresses locally from `/dev/input/event*` (keyboard devices only —
+  no mouse, touchpad, or other input) — no cloud, no editor dependency.
 
 ## Install
 
@@ -36,9 +37,14 @@ omarchy plugin enable samon97.bongocat
 ### Requirements
 
 - **Omarchy** (and its Quickshell-based shell)
-- Read access to `/dev/input/event*`. The keyboard usually already belongs to
-  the `input` group, so most of the time it just works. If nothing happens,
-  check that your user is in that group.
+- **Read access to keyboard input devices.** The monitor opens only keyboard
+  devices (`/dev/input/by-path/*-kbd` and `/dev/input/by-id/*-kbd`, filtered by
+  device capabilities) — it never reads mice, touchpads, or other inputs. Those
+  keyboards usually belong to the `input` group, so it just works in most
+  setups. If nothing happens, add your user to that group (`sudo usermod -aG
+  input $USER`, then log back in). Note: this is a deliberate, privileged
+  global-input read — review it before trusting it in a shared/sensitive
+  session.
 - An **external asset**: the bundled `bongocat.ttf` icon font is a modified
   conversion of the font from the MIT-licensed
   [Bongo Cat](https://github.com/kitgore/BongoCat) VS Code extension by
@@ -79,10 +85,13 @@ allowed. This flat layout follows the convention of the built-in bar widgets.
 
 ## How it works
 
-1. `key_monitor.py` opens all `/dev/input` devices and prints a line to stdout
-   for every pressed key (`EV_KEY` event with value 1).
-2. `BarWidget.qml` runs that script as a `Process`. Each incoming line calls
-   `drum()`, which switches between "left paw down" and "right paw down".
+1. `key_monitor.py` opens keyboard input devices only and prints one line to
+   stdout per pressed key (`EV_KEY` event with value 1), coalescing bursts to
+   a bounded rate.
+2. `BarWidget.qml` runs that script as a `Process`, reading stdout through a
+   `SplitParser` (one `onRead` per line, immediately discarded). Each line
+   calls `drum()`, which switches between "left paw down" and "right paw down" —
+   the shell-side buffer stays bounded even for a long-lived process.
 3. A `Timer` resets it to the idle pose after ~1 second.
 4. The icon glyphs are drawn on a `Canvas`. Instead of the invisible bounding
    box, the *visible* painted outline is centered, and the cat's bottom edge is

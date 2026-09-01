@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "samon97.bongocat",
   "name": "BongoCat",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "samuel",
   "description": "A bongo cat that drums with its paws on each keypress",
   "kinds": ["bar-widget"],

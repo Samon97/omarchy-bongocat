@@ -118,13 +118,12 @@ BarWidget {
   Process {
     id: keyWatcher
     command: [root.monitorScript]
-    stdout: StdioCollector {
-      waitForEnd: false
-      onDataChanged: {
-        if (String(text || "").length > 0) {
-          root.drum()
-        }
-      }
+    // SplitParser emits one onRead per delimited chunk and discards the data
+    // afterwards, so the shell-side buffer stays bounded (StdioCollector, by
+    // contrast, grows without limit for a long-lived process).
+    stdout: SplitParser {
+      splitMarker: "\n"
+      onRead: function() { root.drum() }
     }
     stderr: StdioCollector {
       waitForEnd: true
