@@ -27,10 +27,11 @@ BarWidget {
   // Font size so the cat sits compactly inside the bar, like the other icons.
   readonly property int iconSize: Math.round(Math.min(barSize, 26) * 0.6)
 
-  // Fixed slot, large enough for any frame, centred in the bar. A fixed size
-  // keeps the cat from shifting side to side while it drums.
-  readonly property int slotH: Math.min(barSize, Math.round(iconSize * 1.25))
-  readonly property int slotW: Math.round(slotH * 2.4)
+  // Fixed slot, large enough for any frame, centred in the bar. A fixed width
+  // keeps the cat from shifting side to side while it drums; the height spans
+  // the full bar so the anchored glyph is never clipped.
+  readonly property int slotH: Math.max(barSize, Math.round(iconSize * 1.25))
+  readonly property int slotW: Math.round(barSize * 2.4)
 
   implicitWidth: slotW
   implicitHeight: slotH
@@ -84,6 +85,9 @@ BarWidget {
       var lineRef = (typeof Style !== "undefined" && Style.font && Style.font.body)
         ? Style.font.body : root.iconSize
       var penY = root.barSize / 2 + lineRef * 0.6 - bot
+      // Keep the painted cat fully inside the canvas: never push the top above
+      // the slot nor let the bottom spill past it (which would clip the paws).
+      penY = Math.min(Math.max(penY, top), height - bot)
       ctx.fillText(root.frame === frameIdle ? root.fIdle
                   : (root.frame === "leftdown" ? root.fLeftDown : root.fRightDown),
                    x - bx, penY)
