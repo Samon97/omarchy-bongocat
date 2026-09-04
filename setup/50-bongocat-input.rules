@@ -1,0 +1,9 @@
+# Bongo Cat for Omarchy — make keyboard event devices readable by the input group.
+#
+# Grants read access to keyboard input devices for everyone in the `input` group,
+# so the widget's key_monitor.py can read keypresses without root. Matches only
+# keyboard devices (ID_INPUT_KEYBOARD), never mice, touchpads, or other inputs.
+#
+# Installed by setup/install.sh — do not edit directly.
+
+KERNEL=="event*", SUBSYSTEM=="input", ENV{ID_INPUT_KEYBOARD}=="1", GROUP="input", MODE="0660"

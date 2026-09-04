@@ -40,10 +40,19 @@ omarchy plugin enable samon97.bongocat
 - **Read access to keyboard input devices.** The monitor opens only keyboard
   devices (`/dev/input/by-path/*-kbd` and `/dev/input/by-id/*-kbd`, filtered by
   device capabilities) — it never reads mice, touchpads, or other inputs. Those
-  keyboards usually belong to the `input` group, so it just works in most
-  setups. If nothing happens, add your user to that group (`sudo usermod -aG
-  input $USER`, then log back in). Note: this is a deliberate, privileged
-  global-input read — review it before trusting it in a shared/sensitive
+  keyboards belong to the `input` group, so most setups just work. If nothing
+  happens on the first launch, run the one-time setup once:
+
+  ```bash
+  sudo ./setup/install.sh
+  ```
+
+  It adds your user to the `input` group and installs a udev rule that keeps
+  keyboard event devices owned by that group, then reloads and re-applies the
+  rules immediately. No need to remember `usermod -aG input` by hand. If your
+  current session was started before the group was added, a single log out /
+  back in picks it up. Note: this is a deliberate, privileged global-input
+  read — review the udev rule before trusting it in a shared/sensitive
   session.
 - An **external asset**: the bundled `bongocat.ttf` icon font is a modified
   conversion of the font from the MIT-licensed
@@ -73,6 +82,9 @@ samon97.bongocat/
 ├── key_monitor.py      # Reads keypresses from /dev/input
 ├── bongocat.ttf        # Bundled icon font (converted from pixl-garden)
 ├── assets/bongocat.gif # Demo GIF for this README
+├── setup/
+│   ├── 50-bongocat-input.rules  # udev rule: keyboard devices readable by input group
+│   └── install.sh               # One-time privileged setup (adds group + installs rule)
 ├── LICENSE             # MIT (with a note about the original font)
 ├── CHANGELOG.md
 └── README.md
