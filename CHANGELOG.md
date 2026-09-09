@@ -4,6 +4,17 @@ Alle nennenswerten Änderungen an diesem Plugin werden in dieser Datei
 dokumentiert. Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/),
 Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [Unreleased]
+
+### Behoben
+- `key_monitor.py`: externe Tastaturen wurden nicht erkannt, sobald sie neben
+  Tastencodes noch einzelne Achsen melden. Logitech-Unifying-Empfänger geben am
+  Tastatur-Knoten z. B. `REL_HWHEEL` und `ABS_VOLUME` für ihre Medientasten an;
+  die Capability-Prüfung verwarf bisher jedes Gerät mit *irgendeiner* Achse und
+  ließ damit nur die interne Tastatur übrig. Erkannt wird jetzt über die
+  Tipp-Tasten (`KEY_A`, `KEY_Z`, `KEY_SPACE`); ausgeschlossen werden nur echte
+  Zeigegeräte mit vollem Achsenpaar (`REL_X`+`REL_Y` bzw. `ABS_X`+`ABS_Y`).
+
 ## [1.0.1] - 2026-09-01
 
 ### Geändert

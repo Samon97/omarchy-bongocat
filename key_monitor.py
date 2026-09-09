@@ -49,13 +49,29 @@ def _capability_bits(fd, request):
     return struct.unpack("=Q", mask.ljust(8, b"\0"))[0]
 
 
+# Keys that only a device you can actually type on reports. Mice and media
+# blocks carry a scattering of KEY_* codes (BTN_LEFT, volume, play/pause), but
+# never the typing keys.
+TYPING_KEYS = (30, 44, 57)  # KEY_A, KEY_Z, KEY_SPACE
+TYPING_MASK = sum(1 << bit for bit in TYPING_KEYS)
+
+# A pointer is a device carrying both axes of a cursor: REL_X/REL_Y for mice,
+# ABS_X/ABS_Y for touchpads, touchscreens, and tablets.
+XY_MASK = 0b11
+
+
 def is_keyboard(fd):
-    # A keyboard reports key events but, unlike mice/touchpads/touchscreens,
-    # has no relative or absolute pointer axes.
+    # Match on what the device can type, not on whether it has any axis at all.
+    # Wireless keyboards routinely advertise a stray axis alongside their media
+    # keys -- Logitech unifying receivers report REL_HWHEEL and ABS_VOLUME on
+    # the keyboard node -- so a lone axis must not disqualify a device. Only a
+    # real pointer's X/Y pair does.
     try:
-        if not _capability_bits(fd, KEY_CAP):
+        if _capability_bits(fd, KEY_CAP) & TYPING_MASK != TYPING_MASK:
             return False
-        if _capability_bits(fd, REL_CAP) or _capability_bits(fd, ABS_CAP):
+        if _capability_bits(fd, REL_CAP) & XY_MASK == XY_MASK:
+            return False
+        if _capability_bits(fd, ABS_CAP) & XY_MASK == XY_MASK:
             return False
     except OSError:
         return False
